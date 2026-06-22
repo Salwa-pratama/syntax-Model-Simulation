@@ -20,13 +20,22 @@ def halaman2()  :
     st.write("Gunakan slider untuk menguji skenario 'What-if'. ")
     text("Gunakan slider untuk menguji skenario 'What-if'", '#ffffff', "14px")
 
-    # Slider
-    iklan_slider = st.slider("Anggaran Iklan (Juta)", 0, 50, 10)
-    diskon_slider = st.slider("Besaran Diskon (%)", 0, 50, 10)
-    jumlah_cabang = st.slider("Jumlah cabang 0 - 10 ", 0, 10, 0)
+    # Definisi nilai baseline (Kondisi awal toko)
+    baseline_iklan = 10
+    baseline_diskon = 10
+    baseline_cabang = 2
+
+    st.markdown("### 🎛️ Variabel Kontrol (Intervensi)")
+    col_slider1, col_slider2, col_slider3 = st.columns(3)
+    with col_slider1:
+        iklan_slider = st.slider("Anggaran Iklan (Juta)", 0, 50, value=baseline_iklan)
+    with col_slider2:
+        diskon_slider = st.slider("Besaran Diskon (%)", 0, 50, value=baseline_diskon)
+    with col_slider3:
+        jumlah_cabang = st.slider("Jumlah Cabang (0 - 10)", 0, 10, value=baseline_cabang)
     # load model
     model = load_model("./models/model2.pkl")
-    baseline_input = np.array([[10,10,2]])
+    baseline_input = np.array([[baseline_iklan, baseline_diskon, baseline_cabang]])
     baseline_pred = model.predict(baseline_input)[0]
 
     hasil_pred, delta = run_simulation2(iklan_slider, diskon_slider, jumlah_cabang, model, baseline_pred)
@@ -34,25 +43,27 @@ def halaman2()  :
 
 
 
-     # Menampilkan hasil
+    st.divider()
+    st.markdown("### 📊 Ringkasan Hasil Prediksi")
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.metric(label="Kondisi Baseline", value=f"Rp {baseline_pred:.2f} Jt")
+        
+    with col2:
+        st.metric(label="Prediksi Keuntungan (Intervensi)", value=f"Rp {hasil_pred:.2f} Jt", delta=f"{delta:.2f} Jt")
+        
+    with col3:
+        if delta < 0:
+            st.error(f"⚠️ Skenario ini menghasilkan kerugian sebesar Rp {abs(delta):.2f} Jt dari baseline.")
+        elif delta > 0:
+            st.success(f"✅ Skenario ini menghasilkan keuntungan ekstra sebesar Rp {delta:.2f} Jt dari baseline!")
+        else:
+            st.info("⚖️ Skenario ini tidak mengubah keuntungan (sama dengan baseline).")
 
-    col1, col2 = st.columns(2)
-    color = ""
-    keterangan = ""
-    if delta < 0 :
-        color = "red"
-        keterangan = "Nilai kurang dari baseline"
-    else :
-        color = "green"
-        keterangan = "Nilai lebih dari baseline"
-    col1.metric("Prediksi keuntungan", f"Rp {hasil_pred:.2f} Juta dibandingkan kondisi baseline ")
-    col2.write(f"Skenario ini menghasilkan perubahan sebesar :{color}[{delta:.2f}] Juta dibandingkan kondisi baseline, :{color}[{keterangan}]")
-
-    # Visualisasi perbandingan
-
-    text("Grafik Perbandingan", '#00ff19ff', "50px")
-
-
+    st.divider()
+    st.markdown("### 📈 Visualisasi Perbandingan")
     data_plot = pd.DataFrame({
         'Skenario' : ['Baseline', "Intervensi"],
         'Keuntungan' : [baseline_pred, hasil_pred],
