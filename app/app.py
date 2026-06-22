@@ -37,8 +37,17 @@ hasil_pred , delta = run_simulation(iklan_slider, diskon_slider, model, baseline
 # Menampilkan hasil
 
 col1, col2 = st.columns(2)
+color = ""
+keterangan = ""
+if delta < 0 :
+    color = "red"
+    keterangan = "Nilai kurang dari baseline"
+else :
+    color = "green"
+    keterangan = "Nilai lebih dari baseline"
 col1.metric("Prediksi keuntungan", f"Rp {hasil_pred:.2f} Juta dibandingkan kondisi baseline ")
-col2.write(f"Skenario ini menghasilkan perubahan sebesar {delta:.2f} Juta dibandingkan kondisi baseline")
+col2.write(f"Skenario ini menghasilkan perubahan sebesar :{color}[{delta:.2f}] Juta dibandingkan kondisi baseline, :{color}[{keterangan}]")
+
 # Visualisasi perbandingan
 
 st.title("Gambar grafik")
