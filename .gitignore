@@ -1,0 +1,32 @@
+# ========================
+# PYTHON & ENVIRONMENTS
+# ========================
+# File cache Python (Wajib di-ignore biar nggak menuh-menuhin repo)
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Folder Virtual Environment (Penting banget buat di-ignore!)
+venv/
+.venv/
+env/
+dev-python/
+
+# ========================
+# JUPYTER NOTEBOOK
+# ========================
+# File backup otomatis dari Jupyter Notebook
+.ipynb_checkpoints/
+
+# ========================
+# STREAMLIT & DEPLOYMENT
+# ========================
+# JANGAN PERNAH push file rahasia seperti API Keys atau password!
+.streamlit/secrets.toml
+.env
+
+# ========================
+# OS FILES (Sistem Operasi)
+# ========================
+.DS_Store
+Thumbs.db
